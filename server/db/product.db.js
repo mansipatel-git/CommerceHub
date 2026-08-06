@@ -1,17 +1,23 @@
 const pool = require("../config");
 
 const getAllProductsDb = async ({ limit, offset }) => {
-  const { rows } = await pool.query(
-    `select products.*, trunc(avg(reviews.rating)) as avg_rating, count(reviews.*) from products
-        LEFT JOIN reviews
-        ON products.product_id = reviews.product_id
-        group by products.product_id limit $1 offset $2 `,
-    [limit, offset]
-  );
-  const products = [...rows].sort(() => Math.random() - 0.5);
-  return products;
-};
+  try {
+    const { rows } = await pool.query(
+      `SELECT products.*, trunc(avg(reviews.rating)) AS avg_rating, count(reviews.*)
+       FROM products
+       LEFT JOIN reviews
+       ON products.product_id = reviews.product_id
+       GROUP BY products.product_id
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    );
 
+    return [...rows].sort(() => Math.random() - 0.5);
+  } catch (err) {
+    console.error("DATABASE ERROR:", err);
+    throw err;
+  }
+};
 const createProductDb = async ({ name, price, description, image_url }) => {
   const { rows: product } = await pool.query(
     "INSERT INTO products(name, price, description, image_url) VALUES($1, $2, $3, $4) returning *",
