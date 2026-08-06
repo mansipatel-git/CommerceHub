@@ -97,8 +97,7 @@ const Account = () => {
                   </dd>
                 </div>
                 <div className="bg-gray-50 px-4 py-5">
-                  <Button iconRight={Edit2} onClick={(e) => setShowSettings(!showSettings)}>
-                    {" "}
+                  <Button iconRight={Edit2} onClick={() => setShowSettings(!showSettings)}>
                     Edit
                   </Button>
                 </div>
